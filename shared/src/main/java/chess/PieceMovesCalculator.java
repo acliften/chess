@@ -205,13 +205,14 @@ class PawnMovesCalculator extends PieceMovesCalculator {
             }
         }
 
-        //foward
+        //move forward
         if (board.getPiece(new ChessPosition(row + colorOffset, col)) == null && row +colorOffset < 8 && row + colorOffset > 1){
             moves.add(new ChessMove(pos, new ChessPosition(row + colorOffset, col), null));
         }
 
         //diagonal take
         if (col + 1 <= 8 && board.getPiece(new ChessPosition(row + colorOffset, col + 1)) != null && board.getPiece(new ChessPosition(row + colorOffset, col + 1)).getTeamColor() != board.getPiece(pos).getTeamColor()){
+            //check for promotion capture
             if (row + colorOffset == 8 || row + colorOffset == 1){
                 moves.add(new ChessMove(pos, new ChessPosition(row + colorOffset, col + 1), ChessPiece.PieceType.QUEEN));
                 moves.add(new ChessMove(pos, new ChessPosition(row + colorOffset, col + 1), ChessPiece.PieceType.ROOK));
@@ -221,6 +222,7 @@ class PawnMovesCalculator extends PieceMovesCalculator {
                 moves.add(new ChessMove(pos, new ChessPosition(row + colorOffset, col + 1), null));
             }
         } else if (col - 1 >= 1 && board.getPiece(new ChessPosition(row + colorOffset, col - 1)) != null && board.getPiece(new ChessPosition(row + colorOffset, col - 1)).getTeamColor() != board.getPiece(pos).getTeamColor()){
+            //check for promotion capture
             if (row + colorOffset == 8 || row + colorOffset == 1){
                 moves.add(new ChessMove(pos, new ChessPosition(row + colorOffset, col - 1), ChessPiece.PieceType.QUEEN));
                 moves.add(new ChessMove(pos, new ChessPosition(row + colorOffset, col - 1), ChessPiece.PieceType.ROOK));
