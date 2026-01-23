@@ -34,6 +34,10 @@ public class ChessPosition {
         return theColumn;
     }
 
+    public boolean checkPos(){
+        return this.getRow() >= 1 && this.getRow() <= 8 && this.getColumn() >= 1 && this.getColumn() <= 8;
+    }
+
     @Override
     public String toString() {
         return String.format("[%d, %d]", theRow, theColumn);

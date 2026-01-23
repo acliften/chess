@@ -57,13 +57,39 @@ public class ChessPiece {
         //check the position in the chessboard to see what piece it is
 
         if (board.getPiece(myPosition).getPieceType() == PieceType.KING){
-            KingMovesCalculator king = new KingMovesCalculator();
-            return king.calculateMoves(board, myPosition);
+            KingMovesCalculator kingMoves = new KingMovesCalculator();
+            return kingMoves.calculateMoves(board, myPosition);
+        }
+
+        if (board.getPiece(myPosition).getPieceType() == PieceType.QUEEN){
+            QueenMovesCalculator queenMoves = new QueenMovesCalculator();
+            return queenMoves.calculateMoves(board, myPosition);
+        }
+
+        if (board.getPiece(myPosition).getPieceType() == PieceType.BISHOP){
+            BishopMovesCalculator bishopMoves = new BishopMovesCalculator();
+            return bishopMoves.calculateMoves(board, myPosition);
+        }
+
+        if (board.getPiece(myPosition).getPieceType() == PieceType.ROOK){
+            RookMovesCalculator rookMoves = new RookMovesCalculator();
+            return rookMoves.calculateMoves(board, myPosition);
+        }
+
+        if (board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT){
+            KnightMovesCalculator knightMoves = new KnightMovesCalculator();
+            return knightMoves.calculateMoves(board, myPosition);
+        }
+
+        if (board.getPiece(myPosition).getPieceType() == PieceType.PAWN){
+            PawnMovesCalculator pawnMoves = new PawnMovesCalculator();
+            return pawnMoves.calculateMoves(board, myPosition);
         }
         //make methods to move in every direction
         //make methods to calculate how each piece can move in that position - create MoveCalculator class?
         return List.of();
     }
+
 
     @Override
     public boolean equals(Object o) {
