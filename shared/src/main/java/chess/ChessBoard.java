@@ -2,6 +2,7 @@ package chess;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -47,5 +48,23 @@ public class ChessBoard {
         for (int i = 0; i < board.length; i++){
             Arrays.fill(board[i], null);
         }
+    }
+
+    public ChessPiece[][] getBoard(){
+        return board;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
     }
 }

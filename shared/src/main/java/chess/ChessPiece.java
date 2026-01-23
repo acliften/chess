@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -53,9 +54,28 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
         //check the position in the chessboard to see what piece it is
+
+        if (board.getPiece(myPosition).getPieceType() == PieceType.KING){
+            KingMovesCalculator king = new KingMovesCalculator();
+            return king.calculateMoves(board, myPosition);
+        }
         //make methods to move in every direction
         //make methods to calculate how each piece can move in that position - create MoveCalculator class?
+        return List.of();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceType == that.pieceType && teamColor == that.teamColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceType, teamColor);
     }
 }
