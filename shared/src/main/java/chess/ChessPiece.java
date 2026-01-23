@@ -55,6 +55,8 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //check the position in the chessboard to see what piece it is
+        //make methods to move in every direction
+        //make methods to calculate how each piece can move in that position - create MoveCalculator class?
 
         if (board.getPiece(myPosition).getPieceType() == PieceType.KING){
             KingMovesCalculator kingMoves = new KingMovesCalculator();
@@ -85,9 +87,8 @@ public class ChessPiece {
             PawnMovesCalculator pawnMoves = new PawnMovesCalculator();
             return pawnMoves.calculateMoves(board, myPosition);
         }
-        //make methods to move in every direction
-        //make methods to calculate how each piece can move in that position - create MoveCalculator class?
-        return List.of();
+
+        throw new IllegalArgumentException("no piece to move at that position on the board");
     }
 
 
