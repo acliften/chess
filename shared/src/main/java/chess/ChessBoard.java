@@ -50,6 +50,8 @@ public class ChessBoard {
             }
         }
 
+        board = new ChessPiece[8][8];
+
         //add white special pieces
         this.addPiece(new ChessPosition(1,1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
         this.addPiece(new ChessPosition(1,2), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
