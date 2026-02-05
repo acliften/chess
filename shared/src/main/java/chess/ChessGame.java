@@ -95,11 +95,28 @@ public class ChessGame implements Cloneable{
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        // make (add) a check to see if move is valid after validMoves is implemented
-        if (gameBoard.getPiece(move.getStartPosition()) != null){
-            gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1]
-                    = gameBoard.getBoard()[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1];
+        Collection<ChessMove> vm = validMoves(move.getStartPosition());
+
+        //make move if it's valid
+        if (gameBoard.getPiece(move.getStartPosition()) != null && vm.contains(move) && turn == gameBoard.getPiece(move.getStartPosition()).getTeamColor()){
+            //check if its a pawn promotion else do normal move
+            if (gameBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null){
+                gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = new ChessPiece(turn, move.getPromotionPiece());
+            } else {
+                gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1]
+                        = gameBoard.getBoard()[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1];
+            }
+            //clear starting position
             gameBoard.getBoard()[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1] = null;
+        } else {
+            throw new InvalidMoveException();
+        }
+
+        //change turn to other team
+        if (turn == TeamColor.BLACK){
+            setTeamTurn(TeamColor.WHITE);
+        } else {
+            setTeamTurn(TeamColor.BLACK);
         }
     }
 
