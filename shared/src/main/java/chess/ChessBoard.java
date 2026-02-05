@@ -9,7 +9,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard{
 
     private ChessPiece[][] board = new ChessPiece[8][8];
 
@@ -43,12 +43,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        //clear board
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                board[i][j] = null;
-            }
-        }
 
         board = new ChessPiece[8][8];
 
@@ -98,6 +92,17 @@ public class ChessBoard {
         return board;
     }
 
+    public ChessBoard copy(){
+        ChessBoard nBoard = new ChessBoard();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                nBoard.getBoard()[i][j] = board[i][j];
+            }
+        }
+        return nBoard;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -115,7 +120,7 @@ public class ChessBoard {
     @Override
     public String toString() {
         return "ChessBoard{" +
-                "board=" + Arrays.toString(board) +
+                "board=" + Arrays.deepToString(board) +
                 '}';
     }
 }

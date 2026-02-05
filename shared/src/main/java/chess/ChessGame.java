@@ -3,13 +3,14 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 
+
 /**
  * For a class that can manage a chess game, making moves on a board
  * <p>
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame {
+public class ChessGame implements Cloneable{
 
     private TeamColor turn;
     private ChessBoard gameBoard;
@@ -17,6 +18,7 @@ public class ChessGame {
     public ChessGame() {
         turn = TeamColor.WHITE;
         gameBoard = new ChessBoard();
+        gameBoard.resetBoard();
     }
 
     /**
@@ -72,9 +74,9 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         // make (add) a check to see if move is valid after validMoves is implemented
         if (gameBoard.getPiece(move.getStartPosition()) != null){
-            gameBoard.getBoard()[move.getEndPosition().getRow()][move.getEndPosition().getColumn()]
-                    = gameBoard.getBoard()[move.getStartPosition().getRow()][move.getStartPosition().getColumn()];
-            gameBoard.getBoard()[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = null;
+            gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1]
+                    = gameBoard.getBoard()[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1];
+            gameBoard.getBoard()[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1] = null;
         }
     }
 
@@ -131,6 +133,7 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return gameBoard;
     }
+
 
     @Override
     public String toString() {
