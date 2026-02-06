@@ -172,7 +172,31 @@ public class ChessGame implements Cloneable{
     public boolean isInCheckmate(TeamColor teamColor) {
         // if is incheck and no valid moves then checkmate
         // if (isincheck() && !validmoves()){}
-        throw new RuntimeException("Not implemented");
+
+        if (!isInCheck(teamColor)){
+            return false;
+        }
+
+        boolean checkmate = true;
+
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition pos = new ChessPosition(i,j);
+                ChessPiece piece = gameBoard.getPiece(pos);
+                if (piece == null){
+                    continue;
+                }
+                if (piece.getTeamColor() == teamColor){
+                    Collection<ChessMove> pm = validMoves(pos);
+                    if (!pm.isEmpty()){
+                        checkmate = false;
+                    }
+                }
+            }
+        }
+
+        return checkmate;
+
     }
 
     /**
