@@ -191,7 +191,7 @@ public class ChessGame implements Cloneable{
                 }
                 if (piece.getTeamColor() == teamColor){
                     Collection<ChessMove> pm = validMoves(pos);
-                    if (!pm.isEmpty()){
+                    if (pm != null && !pm.isEmpty()){
                         checkmate = false;
                     }
                 }
@@ -229,7 +229,7 @@ public class ChessGame implements Cloneable{
                 }
                 if (piece.getTeamColor() == teamColor){
                     Collection<ChessMove> pm = validMoves(pos);
-                    if (!pm.isEmpty()){
+                    if (pm != null && !pm.isEmpty()){
                         stalemate = false;
                     }
                 }
