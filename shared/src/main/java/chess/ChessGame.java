@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -128,8 +127,11 @@ public class ChessGame implements Cloneable{
      */
     public boolean isInCheck(TeamColor teamColor) {
         //take all the moves your oppoenented can make if anyone of those is the position of your king then you are in check
+
+
         ChessPosition kpos = null;
         boolean inCheck = false;
+        //find the king
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
@@ -143,6 +145,7 @@ public class ChessGame implements Cloneable{
             return false;
         }
 
+        //see if any pieces can take the king
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition pos = new ChessPosition(i,j);
@@ -208,13 +211,15 @@ public class ChessGame implements Cloneable{
      */
     public boolean isInStalemate(TeamColor teamColor) {
         //if you are not in check but you don't have a legal move
-        //
+
+        //can't be stalemate if ur in check
         if (isInCheck(teamColor)){
             return false;
         }
 
         boolean stalemate = true;
 
+        //see if you have any valid moves
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition pos = new ChessPosition(i,j);
