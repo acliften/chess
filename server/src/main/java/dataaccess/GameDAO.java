@@ -1,6 +1,16 @@
 package dataaccess;
 
-public class GameDAO {
+import chess.ChessGame;
+import java.util.List;
 
-    //create crud methods
+public interface GameDAO {
+
+    void createGame() throws DataAccessException;
+
+    ChessGame getGame() throws DataAccessException;
+
+    List<ChessGame> listGames() throws DataAccessException;
+
+    void updateGame() throws DataAccessException;
+
 }

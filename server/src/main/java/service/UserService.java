@@ -2,7 +2,6 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
-import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
 import records.*;
