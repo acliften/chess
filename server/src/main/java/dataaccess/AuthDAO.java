@@ -1,5 +1,5 @@
 package dataaccess;
 
-public class AuthDAO {
-    //create crud methods
+public interface AuthDAO {
+
 }
