@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.*;
 import io.javalin.*;
+import service.ClearService;
 import service.GameService;
 import service.UserService;
 
@@ -16,8 +17,11 @@ public class Server {
     private final GameService gameService = new GameService(gameDAO, authDAO);
     private final GameHandler gameHandler = new GameHandler(gameService);
 
-    UserService userService = new UserService(userDAO, authDAO);
+    private final UserService userService = new UserService(userDAO, authDAO);
     private final UserHandler userHandler = new UserHandler(userService);
+
+    private final ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
+    private final ClearHandler clearHandler = new ClearHandler(clearService);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -26,7 +30,8 @@ public class Server {
                 .delete("/session", userHandler::logout)
                 .get("/game", gameHandler::listGames)
                 .post("/game", gameHandler::createGame)
-                .put("/game", gameHandler::joinGame);
+                .put("/game", gameHandler::joinGame)
+                .delete("/db", clearHandler::clear);
 
         // Register your endpoints and exception handlers here.
 
