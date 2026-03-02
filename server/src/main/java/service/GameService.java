@@ -1,7 +1,11 @@
 package service;
 
 import dataaccess.*;
+import model.GameData;
 import records.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameService {
     private final GameDAO gameDAO;
@@ -14,18 +18,45 @@ public class GameService {
 
     public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
         if (authDAO.getAuth(request.authorization()) != null){
-            ListGamesResult result = new ListGamesResult(gameDAO.listGames());
-            return result;
+            List<GameList> list = new ArrayList<>();
+            for (GameData game : gameDAO.listGames()) {
+                list.add(new GameList(
+                        game.gameID(),
+                        game.whiteUsername(),
+                        game.blackUsername(),
+                        game.gameName()
+                ));
+            }
+            return new ListGamesResult(list);
         }
         throw new DataAccessException("Error: unauthorized");
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException{
-
-        return null;
+        if (authDAO.getAuth(request.authorization()) != null){
+            return new CreateGameResult(gameDAO.createGame(request.gameName()));
+        } else {
+            throw new DataAccessException("Error: unauthorized");
+        }
     }
-
     public void joinGame(JoinGameRequest request) throws DataAccessException{
+        if (authDAO.getAuth(request.authorization()) != null){
+            GameData gameData = gameDAO.getGame(request.gameID());
+            if (gameData == null){
+                throw new DataAccessException("Error: bad request");
+            }
+            String user = authDAO.getAuth(request.authorization()).username();
 
+            if (request.playerColor().equals("BLACK") && gameData.blackUsername() == null){
+                gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), gameData.whiteUsername(), user, gameData.gameName(), gameData.game()));
+            } else if (request.playerColor().equals("WHITE") && gameData.whiteUsername() == null){
+                gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), user, gameData.blackUsername(), gameData.gameName(), gameData.game()));
+            } else {
+                throw new DataAccessException("Error: already taken");
+            }
+
+        } else {
+            throw new DataAccessException("Error: unauthorized");
+        }
     }
 }
