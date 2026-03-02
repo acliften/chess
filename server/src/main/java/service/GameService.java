@@ -1,19 +1,31 @@
 package service;
 
-import dataaccess.DataAccessException;
+import dataaccess.*;
 import records.*;
 
 public class GameService {
+    private final GameDAO gameDAO;
+    private final AuthDAO authDAO;
 
-    ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
+    public GameService(GameDAO gameDAO, AuthDAO authDAO){
+        this.gameDAO = gameDAO;
+        this.authDAO = authDAO;
+    }
+
+    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
+        if (authDAO.getAuth(request.authorization()) != null){
+            ListGamesResult result = new ListGamesResult(gameDAO.listGames());
+            return result;
+        }
+        throw new DataAccessException("Error: unauthorized");
+    }
+
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException{
+
         return null;
     }
 
-    CreateGameResult createGame(CreateGameRequest request) throws DataAccessException{
-        return null;
-    }
-
-    void joinGame(JoinGameRequest request) throws DataAccessException{
+    public void joinGame(JoinGameRequest request) throws DataAccessException{
 
     }
 }

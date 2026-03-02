@@ -7,8 +7,12 @@ import records.*;
 import service.UserService;
 
 public class UserHandler {
-    UserService userService = new UserService();
+    private final UserService userService;
     Gson serializer = new Gson();
+
+    public UserHandler(UserService userService){
+        this.userService = userService;
+    }
 
     public void register(Context ctx) throws DataAccessException {
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);

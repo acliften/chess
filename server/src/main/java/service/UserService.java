@@ -1,18 +1,17 @@
 package service;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import records.*;
 import java.util.UUID;
 
 public class UserService {
-    MemoryUserDAO userDAO = new MemoryUserDAO();
-    MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
 
-    public UserService(){
-
+    public UserService(UserDAO userDAO, AuthDAO authDAO){
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
     }
 
     public static String generateToken() {
