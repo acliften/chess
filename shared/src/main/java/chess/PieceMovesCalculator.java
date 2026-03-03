@@ -5,25 +5,42 @@ import java.util.List;
 
 public class PieceMovesCalculator {
 
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         return List.of();
     }
 
-}
+    protected void addDirectionalMoves(ChessBoard board, ChessPosition start, List<ChessMove> moves, int rowDir, int colDir) {
+        int newRow = start.getRow();
+        int newCol = start.getColumn();
 
-//        [1,1] [1,2] [1,3] [1,4] [1,5] [1,6] [1,7] [1,8]
-//        [2,1] [2,2] [2,3] [2,4] [2,5] [2,6] [2,7] [2,8]
-//        [3,1] [3,2] [3,3] [3,4] [3,5] [3,6] [3,7] [3,8]
-//        [4,1] [4,2] [4,3] [4,4] [4,5] [4,6] [4,7] [4,8]
-//        [5,1] [5,2] [5,3] [5,4] [5,5] [5,6] [5,7] [5,8]
-//        [6,1] [6,2] [6,3] [6,4] [6,5] [6,6] [6,7] [6,8]
-//        [7,1] [7,2] [7,3] [7,4] [7,5] [7,6] [7,7] [7,8]
-//        [8,1] [8,2] [8,3] [8,4] [8,5] [8,6] [8,7] [8,8]
+        while (true) {
+            newRow += rowDir;
+            newCol += colDir;
+
+            if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
+                break;
+            }
+
+            ChessPosition np = new ChessPosition(newRow, newCol);
+            ChessPiece target = board.getPiece(np);
+            ChessPiece startPiece = board.getPiece(start);
+
+            if (target == null) {
+                moves.add(new ChessMove(start, np, null));
+            } else {
+                if (target.getTeamColor() != startPiece.getTeamColor()) {
+                    moves.add(new ChessMove(start, np, null));
+                }
+                break;
+            }
+        }
+    }
+}
 
 class KingMovesCalculator extends PieceMovesCalculator{
 
     @Override
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         List<ChessMove> moves = new ArrayList<>();
         List<ChessPosition> offset = List.of(new ChessPosition(-1, -1), new ChessPosition(-1, 0), new ChessPosition(-1, 1),
                                              new ChessPosition(0, -1), new ChessPosition(0, 1),
@@ -51,32 +68,17 @@ class KingMovesCalculator extends PieceMovesCalculator{
 class QueenMovesCalculator extends PieceMovesCalculator {
 
     @Override
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         List<ChessMove> moves = new ArrayList<>();
-        List<ChessPosition> offset = List.of(new ChessPosition(-1, -1), new ChessPosition(-1, 0), new ChessPosition(-1, 1),
-                                             new ChessPosition(0, -1), new ChessPosition(0, 1),
-                                             new ChessPosition(1, -1), new ChessPosition(1, 0), new ChessPosition(1, 1));
 
-        for (ChessPosition dir : offset){
-            int newRow = pos.getRow();
-            int newCol = pos.getColumn();
-            while (true){
-                newRow += dir.getRow();
-                newCol += dir.getColumn();
-                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8){
-                    break;
-                }
-                ChessPosition np = new ChessPosition(newRow, newCol);
-                //check if the space is available
-                if (board.getPiece(np) == null){
-                    moves.add(new ChessMove(pos, np, null));
-                } else {
-                    if (board.getPiece(np).getTeamColor() != board.getPiece(pos).getTeamColor()){
-                        moves.add(new ChessMove(pos, np, null));
-                    }
-                    break;
-                }
-            }
+        int[][] directions = {
+                {-1,-1}, {-1,0}, {-1,1},
+                {0,-1},           {0,1},
+                {1,-1},  {1,0},  {1,1}
+        };
+
+        for (int[] dir : directions) {
+            addDirectionalMoves(board, pos, moves, dir[0], dir[1]);
         }
 
         return moves;
@@ -87,30 +89,15 @@ class QueenMovesCalculator extends PieceMovesCalculator {
 class BishopMovesCalculator extends PieceMovesCalculator {
 
     @Override
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         List<ChessMove> moves = new ArrayList<>();
-        List<ChessPosition> offset = List.of(new ChessPosition(1, 1), new ChessPosition(1, -1), new ChessPosition(-1, 1), new ChessPosition(-1, -1));
 
-        for (ChessPosition dir : offset){
-            int newRow = pos.getRow();
-            int newCol = pos.getColumn();
-            while (true){
-                newRow += dir.getRow();
-                newCol += dir.getColumn();
-                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8){
-                    break;
-                }
-                ChessPosition np = new ChessPosition(newRow, newCol);
-                //check if the space is available
-                if (board.getPiece(np) == null){
-                    moves.add(new ChessMove(pos, np, null));
-                } else {
-                    if (board.getPiece(np).getTeamColor() != board.getPiece(pos).getTeamColor()){
-                        moves.add(new ChessMove(pos, np, null));
-                    }
-                    break;
-                }
-            }
+        int[][] directions = {
+                {1,1}, {1,-1}, {-1,1}, {-1,-1}
+        };
+
+        for (int[] dir : directions) {
+            addDirectionalMoves(board, pos, moves, dir[0], dir[1]);
         }
 
         return moves;
@@ -121,19 +108,18 @@ class BishopMovesCalculator extends PieceMovesCalculator {
 class KnightMovesCalculator extends PieceMovesCalculator {
 
     @Override
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         List<ChessMove> moves = new ArrayList<>();
 
         List<ChessPosition> offset = List.of(new ChessPosition(2, 1), new ChessPosition(2, -1), new ChessPosition(-2, 1), new ChessPosition(-2, -1),
                                              new ChessPosition(1, 2), new ChessPosition(-1, 2), new ChessPosition(1, -2),new ChessPosition(-1, -2));
         for (ChessPosition dir : offset){
-            //calculate possible moves
             int newRow = pos.getRow() + dir.getRow();
             int newCol = pos.getColumn() + dir.getColumn();
-            //check if its out of bounds
+
             if (newRow >= 1 && newRow <= 8 && newCol >=1 && newCol <=8){
                 ChessPosition np = new ChessPosition(newRow, newCol);
-                //check if the space is available
+
                 if (board.getPiece(np) == null || board.getPiece(np).getTeamColor() != board.getPiece(pos).getTeamColor()){
                     moves.add(new ChessMove(pos, np, null));
                 }
@@ -151,31 +137,15 @@ class KnightMovesCalculator extends PieceMovesCalculator {
 class RookMovesCalculator extends PieceMovesCalculator {
 
     @Override
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         List<ChessMove> moves = new ArrayList<>();
 
-        List<ChessPosition> offset = List.of(new ChessPosition(-1, 0), new ChessPosition(0, 1), new ChessPosition(0, -1), new ChessPosition(1, 0));
+        int[][] directions = {
+                {-1,0}, {1,0}, {0,1}, {0,-1}
+        };
 
-        for (ChessPosition dir : offset){
-            int newRow = pos.getRow();
-            int newCol = pos.getColumn();
-            while (true){
-                newRow += dir.getRow();
-                newCol += dir.getColumn();
-                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8){
-                    break;
-                }
-                    ChessPosition np = new ChessPosition(newRow, newCol);
-                    //check if the space is available
-                    if (board.getPiece(np) == null){
-                        moves.add(new ChessMove(pos, np, null));
-                    } else {
-                        if (board.getPiece(np).getTeamColor() != board.getPiece(pos).getTeamColor()){
-                            moves.add(new ChessMove(pos, np, null));
-                        }
-                        break;
-                    }
-            }
+        for (int[] dir : directions) {
+            addDirectionalMoves(board, pos, moves, dir[0], dir[1]);
         }
 
         return moves;
@@ -186,7 +156,7 @@ class RookMovesCalculator extends PieceMovesCalculator {
 class PawnMovesCalculator extends PieceMovesCalculator {
 
     @Override
-    public List calculateMoves(ChessBoard board, ChessPosition pos){
+    public List<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos){
         List<ChessMove> moves = new ArrayList<>();
         int colorOffset;
         int row = pos.getRow();
