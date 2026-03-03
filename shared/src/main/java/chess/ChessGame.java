@@ -153,21 +153,18 @@ public class ChessGame implements Cloneable{
             for (int j = 1; j <= 8; j++) {
                 ChessPosition pos = new ChessPosition(i,j);
                 ChessPiece piece = gameBoard.getPiece(pos);
-                if (piece == null){
+                if (piece == null || piece.getTeamColor() == teamColor){
                     continue;
                 }
-                if (piece.getTeamColor() != teamColor){
-                    Collection<ChessMove> pm = piece.pieceMoves(gameBoard, pos);
-                    for (ChessMove move : pm){
-                        if (move.getEndPosition().equals(kpos)) {
-                            inCheck = true;
-                            break;
-                        }
+                Collection<ChessMove> pm = piece.pieceMoves(gameBoard, pos);
+                for (ChessMove move : pm){
+                    if (move.getEndPosition().equals(kpos)) {
+                        return true;
                     }
                 }
             }
         }
-        return inCheck;
+        return false;
     }
 
     /**
