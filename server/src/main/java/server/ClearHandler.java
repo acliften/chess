@@ -8,6 +8,8 @@ import service.GameService;
 import service.UserService;
 
 import java.security.PublicKey;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClearHandler {
 
@@ -18,10 +20,18 @@ public class ClearHandler {
         this.clearService = clearService;
     }
 
-    public void clear(Context ctx) throws DataAccessException {
-        clearService.clear();
-        ctx.status(200);
-        ctx.json(new Object());
+    public void clear(Context ctx) {
+        try{
+            clearService.clear();
+            ctx.status(200);
+            ctx.json("{}");
+        } catch (DataAccessException e) {
+            Map<String, String> error = new HashMap<>();
+            ctx.status(401);
+            error.put("message", e.getMessage());
+            ctx.result(serializer.toJson(error));
+        }
+
     }
 
 }

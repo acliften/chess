@@ -19,6 +19,10 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
+        if (registerRequest == null || registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null){
+            throw new DataAccessException("Error: bad request");
+        }
+
         if (userDAO.getUser(registerRequest.username()) == null){
             UserData user = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
             userDAO.createUser(user);
@@ -27,11 +31,15 @@ public class UserService {
             authDAO.createAuth(auth);
 
             return new RegisterResult(user.username(), authToken);
+        } else {
+            throw new DataAccessException("Error: already taken");
         }
-        throw new DataAccessException("Error: already taken");
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+        if (loginRequest == null || loginRequest.password() == null || loginRequest.username() == null){
+            throw new DataAccessException("Error: bad request");
+        }
         UserData user = userDAO.getUser(loginRequest.username());
         if (user == null){
             throw new DataAccessException("Error: unauthorized");

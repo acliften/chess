@@ -17,6 +17,7 @@ public class GameService {
     }
 
     public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
+
         if (authDAO.getAuth(request.authorization()) != null){
             List<GameList> list = new ArrayList<>();
             for (GameData game : gameDAO.listGames()) {
@@ -28,11 +29,15 @@ public class GameService {
                 ));
             }
             return new ListGamesResult(list);
+        } else {
+            throw new DataAccessException("Error: unauthorized");
         }
-        throw new DataAccessException("Error: unauthorized");
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException{
+        if (request == null || request.gameName() == null || request.authorization() == null){
+            throw new DataAccessException("Error: bad request");
+        }
         if (authDAO.getAuth(request.authorization()) != null){
             return new CreateGameResult(gameDAO.createGame(request.gameName()));
         } else {
@@ -40,6 +45,9 @@ public class GameService {
         }
     }
     public void joinGame(JoinGameRequest request) throws DataAccessException{
+        if ( request == null || request.playerColor() == null){
+            throw new DataAccessException("Error: bad request");
+        }
         if (authDAO.getAuth(request.authorization()) != null){
             GameData gameData = gameDAO.getGame(request.gameID());
             if (gameData == null){
@@ -47,12 +55,20 @@ public class GameService {
             }
             String user = authDAO.getAuth(request.authorization()).username();
 
-            if (request.playerColor().equals("BLACK") && gameData.blackUsername() == null){
-                gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), gameData.whiteUsername(), user, gameData.gameName(), gameData.game()));
-            } else if (request.playerColor().equals("WHITE") && gameData.whiteUsername() == null){
-                gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), user, gameData.blackUsername(), gameData.gameName(), gameData.game()));
+            if (request.playerColor().equals("BLACK")){
+                if (gameData.blackUsername() == null){
+                    gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), gameData.whiteUsername(), user, gameData.gameName(), gameData.game()));
+                } else if (!gameData.blackUsername().equals(user)){
+                    throw new DataAccessException("Error: already taken");
+                }
+            } else if (request.playerColor().equals("WHITE")){
+                if (gameData.whiteUsername() == null){
+                    gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), user, gameData.blackUsername(), gameData.gameName(), gameData.game()));
+                } else if (!gameData.whiteUsername().equals(user)){
+                    throw new DataAccessException("Error: already taken");
+                }
             } else {
-                throw new DataAccessException("Error: already taken");
+                throw new DataAccessException("Error: bad request");
             }
 
         } else {
