@@ -36,7 +36,7 @@ public class PieceMovesCalculator {
         }
     }
 
-    public void oneLoopMoves(List<ChessPosition> offset, ChessBoard board, ChessPosition pos, List<ChessMove> moves){
+    public void loopMovesOnce(List<ChessPosition> offset, ChessBoard board, ChessPosition pos, List<ChessMove> moves){
         for (ChessPosition dir : offset){
             int newRow = pos.getRow() + dir.getRow();
             int newCol = pos.getColumn() + dir.getColumn();
@@ -63,7 +63,7 @@ class KingMovesCalculator extends PieceMovesCalculator{
                                              new ChessPosition(0, 1), new ChessPosition(1, -1),
                                              new ChessPosition(1, 0), new ChessPosition(1, 1));
 
-        oneLoopMoves(offset, board, pos, moves);
+        loopMovesOnce(offset, board, pos, moves);
 
         return moves;
     }
@@ -121,7 +121,7 @@ class KnightMovesCalculator extends PieceMovesCalculator {
                                              new ChessPosition(1, 2), new ChessPosition(-1, 2),
                                              new ChessPosition(1, -2),new ChessPosition(-1, -2));
 
-        oneLoopMoves(offset, board, pos, moves);
+        loopMovesOnce(offset, board, pos, moves);
 
         return moves;
     }
