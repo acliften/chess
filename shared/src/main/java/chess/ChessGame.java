@@ -221,26 +221,25 @@ public class ChessGame implements Cloneable{
             return false;
         }
 
-        boolean stalemate = true;
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
 
-        //see if you have any valid moves
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition pos = new ChessPosition(i,j);
+                ChessPosition pos = new ChessPosition(row, col);
                 ChessPiece piece = gameBoard.getPiece(pos);
-                if (piece == null){
+
+                if (piece == null || piece.getTeamColor() != teamColor) {
                     continue;
                 }
-                if (piece.getTeamColor() == teamColor){
-                    Collection<ChessMove> pm = validMoves(pos);
-                    if (pm != null && !pm.isEmpty()){
-                        stalemate = false;
-                    }
+
+                Collection<ChessMove> moves = validMoves(pos);
+
+                if (moves != null && !moves.isEmpty()) {
+                    return false;
                 }
             }
         }
 
-        return stalemate;
+        return true;
     }
 
     /**
