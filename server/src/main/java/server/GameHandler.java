@@ -24,13 +24,12 @@ public class GameHandler {
 
             ctx.result(serializer.toJson(result));
         } catch (DataAccessException e){
-            Map<String, String> error = new HashMap<>();
-            ctx.status(401);
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            handleErrors(e, ctx);
         }
 
     }
+
+
 
     public void createGame(Context ctx) throws DataAccessException {
         try{
@@ -41,14 +40,7 @@ public class GameHandler {
 
             ctx.result(serializer.toJson(result));
         } catch(DataAccessException e){
-            Map<String, String> error = new HashMap<>();
-            if (e.getMessage().contains("bad request")) {
-                ctx.status(400);
-            } else if (e.getMessage().contains("unauthorized")) {
-                ctx.status(401);
-            }
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            handleErrors(e, ctx);
         }
 
     }
@@ -60,16 +52,21 @@ public class GameHandler {
             JoinGameRequest request = new JoinGameRequest(auth, body.playerColor(), body.gameID());
             gameService.joinGame(request);
         } catch(DataAccessException e){
-            Map<String, String> error = new HashMap<>();
-            if (e.getMessage().contains("bad request")){
-                ctx.status(400);
-            } else if (e.getMessage().contains("unauthorized")) {
-                ctx.status(401);
-            } else if (e.getMessage().contains("already taken")) {
-                ctx.status(403);
-            }
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            handleErrors(e, ctx);
         }
     }
+
+    public void handleErrors(DataAccessException e, Context ctx){
+        Map<String, String> error = new HashMap<>();
+        if (e.getMessage().contains("bad request")){
+            ctx.status(400);
+        } else if (e.getMessage().contains("unauthorized")) {
+            ctx.status(401);
+        } else if (e.getMessage().contains("already taken")) {
+            ctx.status(403);
+        }
+        error.put("message", e.getMessage());
+        ctx.result(serializer.toJson(error));
+    }
+
 }

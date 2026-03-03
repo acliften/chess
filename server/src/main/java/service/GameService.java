@@ -59,13 +59,15 @@ public class GameService {
 
             if (request.playerColor().equals("BLACK")){
                 if (gameData.blackUsername() == null){
-                    gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), gameData.whiteUsername(), user, gameData.gameName(), gameData.game()));
+                    gameDAO.updateGame(request.gameID(),
+                            new GameData(gameData.gameID(), gameData.whiteUsername(), user, gameData.gameName(), gameData.game()));
                 } else if (!gameData.blackUsername().equals(user)){
                     throw new DataAccessException("Error: already taken");
                 }
             } else if (request.playerColor().equals("WHITE")){
                 if (gameData.whiteUsername() == null){
-                    gameDAO.updateGame(request.gameID(), new GameData(gameData.gameID(), user, gameData.blackUsername(), gameData.gameName(), gameData.game()));
+                    gameDAO.updateGame(request.gameID(),
+                            new GameData(gameData.gameID(), user, gameData.blackUsername(), gameData.gameName(), gameData.game()));
                 } else if (!gameData.whiteUsername().equals(user)){
                     throw new DataAccessException("Error: already taken");
                 }

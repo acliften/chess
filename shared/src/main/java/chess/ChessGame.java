@@ -97,10 +97,13 @@ public class ChessGame implements Cloneable{
         Collection<ChessMove> vm = validMoves(move.getStartPosition());
 
         //make move if it's valid
-        if (gameBoard.getPiece(move.getStartPosition()) != null && vm.contains(move) && turn == gameBoard.getPiece(move.getStartPosition()).getTeamColor()){
-            //check if its a pawn promotion else do normal move
+        if (gameBoard.getPiece(move.getStartPosition()) != null
+                && vm.contains(move)
+                && turn == gameBoard.getPiece(move.getStartPosition()).getTeamColor()){
+            //check if it's a pawn promotion else do normal move
             if (gameBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null){
-                gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = new ChessPiece(turn, move.getPromotionPiece());
+                gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1]
+                        = new ChessPiece(turn, move.getPromotionPiece());
             } else {
                 gameBoard.getBoard()[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1]
                         = gameBoard.getBoard()[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1];
@@ -156,8 +159,9 @@ public class ChessGame implements Cloneable{
                 if (piece.getTeamColor() != teamColor){
                     Collection<ChessMove> pm = piece.pieceMoves(gameBoard, pos);
                     for (ChessMove move : pm){
-                        if (move.getEndPosition().equals(kpos)){
+                        if (move.getEndPosition().equals(kpos)) {
                             inCheck = true;
+                            break;
                         }
                     }
                 }
