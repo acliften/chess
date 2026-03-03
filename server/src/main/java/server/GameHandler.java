@@ -11,7 +11,8 @@ import java.util.Map;
 
 public class GameHandler {
     private final GameService gameService;
-    Gson serializer = new Gson();
+    private final Gson serializer = new Gson();
+    private ErrorHandler errorHandler = new ErrorHandler();
 
     public GameHandler(GameService gameService){
         this.gameService = gameService;
@@ -24,7 +25,7 @@ public class GameHandler {
 
             ctx.result(serializer.toJson(result));
         } catch (DataAccessException e){
-            handleErrors(e, ctx);
+            errorHandler.handleErrors(e, ctx);
         }
 
     }
@@ -40,7 +41,7 @@ public class GameHandler {
 
             ctx.result(serializer.toJson(result));
         } catch(DataAccessException e){
-            handleErrors(e, ctx);
+            errorHandler.handleErrors(e, ctx);
         }
 
     }
@@ -52,21 +53,8 @@ public class GameHandler {
             JoinGameRequest request = new JoinGameRequest(auth, body.playerColor(), body.gameID());
             gameService.joinGame(request);
         } catch(DataAccessException e){
-            handleErrors(e, ctx);
+            errorHandler.handleErrors(e, ctx);
         }
-    }
-
-    public void handleErrors(DataAccessException e, Context ctx){
-        Map<String, String> error = new HashMap<>();
-        if (e.getMessage().contains("bad request")){
-            ctx.status(400);
-        } else if (e.getMessage().contains("unauthorized")) {
-            ctx.status(401);
-        } else if (e.getMessage().contains("already taken")) {
-            ctx.status(403);
-        }
-        error.put("message", e.getMessage());
-        ctx.result(serializer.toJson(error));
     }
 
 }

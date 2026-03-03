@@ -14,7 +14,8 @@ import java.util.Map;
 public class ClearHandler {
 
     private final ClearService clearService;
-    Gson serializer = new Gson();
+    private final Gson serializer = new Gson();
+    private ErrorHandler errorHandler = new ErrorHandler();
 
     public ClearHandler(ClearService clearService){
         this.clearService = clearService;
@@ -26,10 +27,7 @@ public class ClearHandler {
             ctx.status(200);
             ctx.json("{}");
         } catch (DataAccessException e) {
-            Map<String, String> error = new HashMap<>();
-            ctx.status(401);
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            errorHandler.handleErrors(e, ctx);
         }
 
     }

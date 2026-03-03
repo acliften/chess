@@ -12,7 +12,8 @@ import java.util.Map;
 
 public class UserHandler {
     private final UserService userService;
-    Gson serializer = new Gson();
+    private final Gson serializer = new Gson();
+    private ErrorHandler errorHandler = new ErrorHandler();
 
     public UserHandler(UserService userService){
         this.userService = userService;
@@ -25,14 +26,7 @@ public class UserHandler {
 
             ctx.result(serializer.toJson(result));
         } catch(DataAccessException e){
-            Map<String, String> error = new HashMap<>();
-            if (e.getMessage().contains("bad request")){
-                ctx.status(400);
-            } else if (e.getMessage().contains("already taken")) {
-                ctx.status(403);
-            }
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            errorHandler.handleErrors(e, ctx);
         }
     }
 
@@ -43,14 +37,7 @@ public class UserHandler {
 
             ctx.result(serializer.toJson(result));
         } catch (DataAccessException e){
-            Map<String, String> error = new HashMap<>();
-            if (e.getMessage().contains("bad request")){
-                ctx.status(400);
-            } else if (e.getMessage().contains("unauthorized")) {
-                ctx.status(401);
-            }
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            errorHandler.handleErrors(e, ctx);
         }
 
     }
@@ -60,10 +47,7 @@ public class UserHandler {
             LogoutRequest request = new LogoutRequest(ctx.header("authorization"));
             userService.logout(request);
         } catch(DataAccessException e){
-            Map<String, String> error = new HashMap<>();
-            ctx.status(401);
-            error.put("message", e.getMessage());
-            ctx.result(serializer.toJson(error));
+            errorHandler.handleErrors(e, ctx);
         }
 
     }
