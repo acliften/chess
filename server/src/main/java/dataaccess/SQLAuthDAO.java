@@ -21,7 +21,7 @@ public class SQLAuthDAO implements AuthDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to create auth_table");
+            throw new DataAccessException("Unable to create auth table");
         }
 
     }
@@ -36,7 +36,7 @@ public class SQLAuthDAO implements AuthDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to create Authorization");
+            throw new DataAccessException("Unable to create authorization");
         }
 
     }
