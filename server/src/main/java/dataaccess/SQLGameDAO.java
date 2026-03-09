@@ -36,7 +36,7 @@ public class SQLGameDAO implements GameDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to create game table");
+            throw new DataAccessException("Error: unable to create game table");
         }
     }
 
@@ -58,9 +58,9 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to create game");
+            throw new DataAccessException("Error: unable to create game");
         }
-        throw new DataAccessException("Unable to create game");
+        throw new DataAccessException("Error: unable to create game");
     }
 
     @Override
@@ -81,7 +81,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to get GameData");
+            throw new DataAccessException("Error: unable to get GameData");
         }
     }
 
@@ -104,7 +104,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to get GameData");
+            throw new DataAccessException("Error: unable to get GameData");
         }
     }
 
@@ -120,11 +120,11 @@ public class SQLGameDAO implements GameDAO{
                 ps.setInt(4, gameID);
                 int rows = ps.executeUpdate();
                 if (rows == 0){
-                    throw new DataAccessException("Game does not exist");
+                    throw new DataAccessException("Error: game does not exist");
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to get update game");
+            throw new DataAccessException("Error: unable to get update game");
         }
     }
 
@@ -136,7 +136,7 @@ public class SQLGameDAO implements GameDAO{
                 ps.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to delete data");
+            throw new DataAccessException("Error: unable to delete data");
         }
     }
 }

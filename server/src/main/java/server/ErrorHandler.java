@@ -19,8 +19,16 @@ public class ErrorHandler {
             ctx.status(401);
         } else if (e.getMessage().contains("already taken")) {
             ctx.status(403);
+        } else {
+            ctx.status(500);
         }
-        error.put("message", e.getMessage());
+
+        String message = e.getMessage();
+        if (!message.toLowerCase().contains("error")){
+            message = "Error: " + message;
+        }
+
+        error.put("message", message);
         ctx.result(serializer.toJson(error));
     }
 

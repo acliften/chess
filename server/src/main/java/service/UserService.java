@@ -2,6 +2,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import records.*;
 import java.util.UUID;
 
@@ -24,7 +25,8 @@ public class UserService {
         }
 
         if (userDAO.getUser(registerRequest.username()) == null){
-            UserData user = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+            String hashedPassword = BCrypt.hashpw(registerRequest.password(), BCrypt.gensalt());
+            UserData user = new UserData(registerRequest.username(), hashedPassword, registerRequest.email());
             userDAO.createUser(user);
             String authToken = generateToken();
             AuthData auth = new AuthData(authToken, user.username());
@@ -44,7 +46,7 @@ public class UserService {
         if (user == null){
             throw new DataAccessException("Error: unauthorized");
         }
-        if (loginRequest.password().equals(user.password())){
+        if (BCrypt.checkpw(loginRequest.password(), user.password())){
             String authToken = generateToken();
             AuthData auth = new AuthData(authToken, user.username());
             authDAO.createAuth(auth);

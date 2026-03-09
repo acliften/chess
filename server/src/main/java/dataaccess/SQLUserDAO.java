@@ -26,7 +26,7 @@ public class SQLUserDAO implements UserDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to create user table");
+            throw new DataAccessException("Error: unable to create user table");
         }
 
     }
@@ -42,7 +42,7 @@ public class SQLUserDAO implements UserDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to create user");
+            throw new DataAccessException("Error: unable to create user");
         }
 
     }
@@ -61,7 +61,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to get UserData");
+            throw new DataAccessException("Error: unable to get UserData");
         }
     }
 
@@ -73,7 +73,7 @@ public class SQLUserDAO implements UserDAO{
                 ps.executeUpdate();
             }
         } catch (SQLException e){
-            throw new DataAccessException("Unable to delete data");
+            throw new DataAccessException("Error: unable to delete data");
         }
     }
 }
