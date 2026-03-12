@@ -100,10 +100,10 @@ public class SQLdataAccessTests {
 
     @Test
     public void getUserPositive() throws DataAccessException {
-        UserData user = new UserData("user", "password", "email");
+        UserData user = new UserData("user2", "password", "email");
         userDAO.createUser(user);
 
-        UserData getuser = userDAO.getUser("user");
+        UserData getuser = userDAO.getUser("user2");
         assertEquals(user, getuser);
     }
 
