@@ -158,28 +158,47 @@ public class SQLdataAccessTests {
     }
 
     @Test
-    public void listGamesPositive(){
+    public void listGamesPositive() throws DataAccessException {
+        gameDAO.createGame("game1");
+        gameDAO.createGame("game2");
+
+        var games = gameDAO.listGames();
+
+        assertEquals(2, games.size());
+    }
+
+    @Test
+    public void listGamesNegative() throws DataAccessException {
+        var games = gameDAO.listGames();
+
+        assertEquals(0, games.size());
+    }
+
+    @Test
+    public void updateGamePositive() throws DataAccessException {
+        int gameID = gameDAO.createGame("game1");
+
+        GameData update = new GameData(gameID, "big yahu", null, "game1", new ChessGame());
+        gameDAO.updateGame(gameID, update);
+
+        GameData updatedGame = gameDAO.getGame(gameID);
+
+        assertEquals("big yahu", updatedGame.whiteUsername());
+    }
+
+    @Test
+    public void updateGameNegative() throws DataAccessException {
+        GameData update = new GameData(69, "big yahu", null, "game1", new ChessGame());
+        assertThrows(DataAccessException.class, ()-> gameDAO.updateGame(update.gameID(), update));
 
     }
 
     @Test
-    public void listGamesNegative(){
+    public void clearGamePositive() throws DataAccessException {
+        int gameID = gameDAO.createGame("game1");
+        gameDAO.clear();
 
-    }
-
-    @Test
-    public void updateGamePositive(){
-
-    }
-
-    @Test
-    public void updateGameNegative(){
-
-    }
-
-    @Test
-    public void clearGamePositive(){
-
+        assertNull(gameDAO.getGame(gameID));
     }
 
 }
