@@ -139,18 +139,22 @@ public class SQLdataAccessTests {
     }
 
     @Test
-    public void createGameNegative(){
-
+    public void createGameNegative() throws DataAccessException {
+        assertThrows(DataAccessException.class, ()-> gameDAO.createGame(null));
     }
 
     @Test
-    public void getGamePositive(){
+    public void getGamePositive() throws DataAccessException {
+        int gameID = gameDAO.createGame("game1");
 
+        assertInstanceOf(GameData.class, gameDAO.getGame(gameID));
     }
 
     @Test
-    public void getGameNegative(){
+    public void getGameNegative() throws DataAccessException {
+        int gameID = gameDAO.createGame("game1");
 
+        assertNull(gameDAO.getGame(gameID + 67));
     }
 
     @Test
