@@ -16,12 +16,12 @@ public class Client {
     }
 
     public void run() {
-        System.out.println("hi");
+        System.out.println("Welcome to 240 chess. Type Help to get started");
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")){
-            System.out.print("\n" + ">>> ");
+            System.out.print( ">>> ");
             String line = scanner.nextLine();
 
             try {
@@ -74,8 +74,7 @@ public class Client {
                     - register <USERNAME> <PASSWORD> <EMAIL> - to create an account
                     - login <USERNAME> <PASSWORD>
                     - quit - exit program
-                    - help - receive this instruction again
-                    """;
+                    - help - list of available commands""";
         }
         return """
                 - create <GAME_NAME> - creates a game
@@ -84,8 +83,7 @@ public class Client {
                 - observe <ID> - spectate a game
                 - logout - log out of your account
                 - quit - exit program
-                - help - shows this list again
-                """;
+                - help - list of available commands""";
     }
 
 }

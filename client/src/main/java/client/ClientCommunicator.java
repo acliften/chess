@@ -19,7 +19,7 @@ public class ClientCommunicator {
         this.serverURL = url;
     }
 
-    public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -27,6 +27,10 @@ public class ClientCommunicator {
             if (request != null){
                 http.setDoOutput(true);
             }
+            if (authToken !=null){
+                http.setRequestProperty("Authorization", authToken);
+            }
+
 
             writeBody(request, http);
             http.connect();

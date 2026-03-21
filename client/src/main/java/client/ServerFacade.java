@@ -1,7 +1,6 @@
 package client;
 
-import records.RegisterRequest;
-import records.RegisterResult;
+import records.*;
 
 public class ServerFacade {
 
@@ -19,13 +18,19 @@ public class ServerFacade {
         String email = params[2];
         RegisterRequest request = new RegisterRequest(username, password, email);
 
-        RegisterResult result = server.makeRequest("POST", "/user", request, RegisterResult.class);
+        RegisterResult result = server.makeRequest("POST", "/user", request, RegisterResult.class, null);
         authToken = result.authToken();
         return "Logged in as " + result.username();
     }
 
-    public String login(String[] params){
-        return "";
+    public String login(String[] params) throws ResponseException {
+        String username = params[0];
+        String password = params[1];
+        LoginRequest request = new LoginRequest(username, password);
+
+        LoginResult result = server.makeRequest("POST", "/session", request, LoginResult.class, null);
+        authToken = result.authToken();
+        return "Logged in as " + result.username();
 
     }
 
@@ -47,8 +52,10 @@ public class ServerFacade {
         return "";
     }
 
-    public String logout(){
-        return "";
+    public String logout() throws ResponseException {
+        LogoutRequest request = new LogoutRequest(authToken);
+        LoginResult result = server.makeRequest("DELETE", "/session", request, LoginResult.class, authToken);
+        return "logged out";
     }
 
 
