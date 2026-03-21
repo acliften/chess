@@ -1,5 +1,6 @@
 package ui;
 
+import client.ResponseException;
 import client.ServerFacade;
 
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class Client {
             try {
                 result = eval(line);
                 System.out.println(result);
-            } catch (Throwable e){
+            } catch (Exception e){
                 System.out.println(e.toString());
             }
 
@@ -31,22 +32,34 @@ public class Client {
 
     public String eval(String input){
         try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] tokens = input.split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> sf.register(params);
-                case "login" -> sf.login(params);
+                case "register" -> {
+                    String result = sf.register(params);
+                    loggedIn = true;
+                    yield result;
+                }
+                case "login" -> {
+                    String result = sf.login(params);
+                    loggedIn = true;
+                    yield result;
+                }
                 case "create" -> sf.createGame(params);
                 case "list" -> sf.listGames();
                 case "join" -> sf.joinGame(params);
                 case "observe" -> sf.observeGame(params);
-                case "logout" -> sf.logout();
+                case "logout" -> {
+                    String result = sf.logout();
+                    loggedIn = false;
+                    yield result;
+                }
                 case "help" -> help();
                 case "quit" -> "quit";
                 default -> help();
             };
-        } catch (Exception e){
+        } catch (ResponseException e){
             return e.getMessage();
         }
     }
