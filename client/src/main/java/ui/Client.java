@@ -9,7 +9,11 @@ import java.util.Scanner;
 public class Client {
 
     boolean loggedIn = false;
-    ServerFacade sf = new ServerFacade();
+    ServerFacade sf;
+
+    public Client(String url){
+        this.sf = new ServerFacade(url);
+    }
 
     public void run() {
         System.out.println("hi");
@@ -56,7 +60,7 @@ public class Client {
                     yield result;
                 }
                 case "help" -> help();
-                case "quit" -> "quit";
+                case "quit" -> "exiting program";
                 default -> help();
             };
         } catch (ResponseException e){

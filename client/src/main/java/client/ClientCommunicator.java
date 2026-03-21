@@ -13,18 +13,28 @@ import java.util.Map;
 public class ClientCommunicator {
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private String serverURL;
+
+    public ClientCommunicator(String url){
+        this.serverURL = url;
+    }
 
     public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
-            URL url = (new URI("http://localhost:8080" + path)).toURL();
+            URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
-            http.setDoOutput(true);
+            if (request != null){
+                http.setDoOutput(true);
+            }
 
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
-            return readBody(http, responseClass);
+            if (responseClass != null){
+                return readBody(http, responseClass);
+            }
+            return null;
         } catch (ResponseException e){
             throw e;
         } catch (Exception e){
@@ -60,14 +70,13 @@ public class ClientCommunicator {
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException{
         T response = null;
-        if (http.getContentLength() < 0){
-            try (InputStream respBody = http.getInputStream()){
-                InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null){
-                    response = new Gson().fromJson(reader, responseClass);
-                }
+        try (InputStream respBody = http.getInputStream()){
+            InputStreamReader reader = new InputStreamReader(respBody);
+            if (responseClass != null){
+                response = new Gson().fromJson(reader, responseClass);
             }
         }
+
         return response;
     }
 

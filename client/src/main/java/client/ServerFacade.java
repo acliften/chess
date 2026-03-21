@@ -6,16 +6,22 @@ import records.RegisterResult;
 public class ServerFacade {
 
     ClientCommunicator server;
+    String authToken;
+    //String serverURL;
+
+    public ServerFacade(String url){
+        server = new ClientCommunicator(url);
+    }
 
     public String register(String[] params) throws ResponseException {
         String username = params[0];
         String password = params[1];
-        String email = params[3];
+        String email = params[2];
         RegisterRequest request = new RegisterRequest(username, password, email);
 
-        RegisterResult result = server.makeRequest("POST", "/session", request, RegisterResult.class);
-
-        return "";
+        RegisterResult result = server.makeRequest("POST", "/user", request, RegisterResult.class);
+        authToken = result.authToken();
+        return "Logged in as " + result.username();
     }
 
     public String login(String[] params){

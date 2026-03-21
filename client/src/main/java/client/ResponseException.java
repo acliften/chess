@@ -37,7 +37,7 @@ public class ResponseException extends Exception {
     public static Code fromHttpStatusCode(int httpStatusCode) {
         return switch (httpStatusCode) {
             case 500 -> Code.ServerError;
-            case 400 -> Code.ClientError;
+            case 400, 401, 403 -> Code.ClientError;
             default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
         };
     }
