@@ -13,6 +13,7 @@ public class ServerFacade {
 
     public ServerFacade(String url){
         server = new ClientCommunicator(url);
+        games = new HashMap<>();
     }
 
     public String register(String[] params) throws ResponseException {
@@ -49,7 +50,9 @@ public class ServerFacade {
     public String listGames() throws ResponseException {
 //        ListGamesRequest request = new ListGamesRequest(authToken);
         ListGamesResult result = server.makeRequest("GET", "/game", null, ListGamesResult.class, authToken);
-        games.clear();
+        if (games != null){
+            games.clear();
+        }
 
         int i = 1;
         for (GameList game : result.games()){
@@ -60,7 +63,12 @@ public class ServerFacade {
             games.put(i, game);
             i++;
         }
-        return "";
+
+        if (games !=null && games.isEmpty()){
+            return "No games available. use 'create <GAME_NAME>' to create a new game";
+        } else {
+            return "";
+        }
 
     }
 
@@ -73,8 +81,13 @@ public class ServerFacade {
         return "Joined game " + gameNumber;
     }
 
-    public String observeGame(String[] params){
-        return "";
+    public String observeGame(String[] params) throws ResponseException {
+
+        int gameNumber = Integer.parseInt(params[0]);
+        JoinGameRequest request = new JoinGameRequest(authToken, "OBSERVER", games.get(gameNumber).gameID());
+
+        server.makeRequest("PUT", "/game", request, null, authToken);
+        return "Observing game " + gameNumber;
     }
 
     public String logout() throws ResponseException {

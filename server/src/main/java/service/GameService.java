@@ -71,6 +71,8 @@ public class GameService {
                 } else if (!gameData.whiteUsername().equals(user)){
                     throw new DataAccessException("Error: already taken");
                 }
+            } else if (request.playerColor().equals("OBSERVER")){
+                return;
             } else {
                 throw new DataAccessException("Error: bad request");
             }
