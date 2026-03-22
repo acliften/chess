@@ -1,15 +1,18 @@
 package ui;
 
+import chess.ChessGame;
 import client.ResponseException;
 import client.ServerFacade;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Client {
 
     boolean loggedIn = false;
     ServerFacade sf;
+    ChessBoard cb = new ChessBoard();
 
     public Client(String url){
         this.sf = new ServerFacade(url);
@@ -20,13 +23,15 @@ public class Client {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")){
+        while (!"quit".equals(result)){
             System.out.print( ">>> ");
             String line = scanner.nextLine();
 
             try {
                 result = eval(line);
-                System.out.println(result);
+                if (result != null) {
+                    System.out.println(result);
+                }
             } catch (Exception e){
                 System.out.println(e.toString());
             }
@@ -52,15 +57,26 @@ public class Client {
                 }
                 case "create" -> sf.createGame(params);
                 case "list" -> sf.listGames();
-                case "join" -> sf.joinGame(params);
-                case "observe" -> sf.observeGame(params);
+                case "join" -> {
+                    if (params.length < 2){
+                        yield "Error: include <ID> [WHITE|BLACK]";
+                    }
+                    ChessGame game = sf.joinGame(params);
+                    cb.drawChessboard(game, Objects.equals(params[1], "BLACK"));
+                    yield null;
+                }
+                case "observe" -> {
+                    ChessGame game = sf.observeGame(params);
+                    cb.drawChessboard(game, false);
+                    yield null;
+                }
                 case "logout" -> {
                     String result = sf.logout();
                     loggedIn = false;
                     yield result;
                 }
                 case "help" -> help();
-                case "quit" -> "exiting program";
+                case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException e){

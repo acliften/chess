@@ -35,8 +35,10 @@ public class GameService {
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException{
-        if (request == null || request.gameName() == null || request.authorization() == null){
+        if (request == null || request.gameName() == null){
             throw new DataAccessException("Error: bad request");
+        } else if (request.authorization() == null){
+            throw new DataAccessException("Error: unauthorized");
         }
         if (authDAO.getAuth(request.authorization()) != null){
             return new CreateGameResult(gameDAO.createGame(request.gameName()));

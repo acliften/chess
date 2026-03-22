@@ -1,5 +1,7 @@
 package client;
 
+import chess.ChessGame;
+import model.GameData;
 import records.*;
 
 import java.util.HashMap;
@@ -8,7 +10,6 @@ public class ServerFacade {
 
     ClientCommunicator server;
     String authToken;
-    //String serverURL;
     HashMap<Integer, GameList> games;
 
     public ServerFacade(String url){
@@ -67,27 +68,34 @@ public class ServerFacade {
         if (games !=null && games.isEmpty()){
             return "No games available. use 'create <GAME_NAME>' to create a new game";
         } else {
-            return "";
+            return null;
         }
 
     }
 
-    public String joinGame(String[] params) throws ResponseException {
+    public ChessGame joinGame(String[] params) throws ResponseException {
         int gameNumber = Integer.parseInt(params[0]);
         String color = params[1];
+        if (!games.containsKey(gameNumber)){
+            throw new ResponseException(ResponseException.Code.ClientError, "Error: invalid game number");
+        }
         JoinGameRequest request = new JoinGameRequest(authToken, color, games.get(gameNumber).gameID());
-
         server.makeRequest("PUT", "/game", request, null, authToken);
-        return "Joined game " + gameNumber;
+
+        //change later
+        return new ChessGame();
     }
 
-    public String observeGame(String[] params) throws ResponseException {
-
+    public ChessGame observeGame(String[] params) throws ResponseException {
         int gameNumber = Integer.parseInt(params[0]);
+        if (!games.containsKey(gameNumber)){
+            throw new ResponseException(ResponseException.Code.ClientError, "Error: invalid game number");
+        }
         JoinGameRequest request = new JoinGameRequest(authToken, "OBSERVER", games.get(gameNumber).gameID());
 
         server.makeRequest("PUT", "/game", request, null, authToken);
-        return "Observing game " + gameNumber;
+        //change later
+        return new ChessGame();
     }
 
     public String logout() throws ResponseException {
