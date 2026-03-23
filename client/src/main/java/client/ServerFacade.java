@@ -65,7 +65,7 @@ public class ServerFacade {
             i++;
         }
 
-        if (games !=null && games.isEmpty()){
+        if (games != null && games.isEmpty()){
             return "No games available. use 'create <GAME_NAME>' to create a new game";
         } else {
             return null;
@@ -102,6 +102,10 @@ public class ServerFacade {
         LogoutRequest request = new LogoutRequest(authToken);
         LoginResult result = server.makeRequest("DELETE", "/session", request, LoginResult.class, authToken);
         return "logged out";
+    }
+
+    public void clear() throws ResponseException {
+        server.makeRequest("DELETE", "/db", null, null, null);
     }
 
 
