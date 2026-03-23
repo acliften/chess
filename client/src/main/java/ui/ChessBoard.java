@@ -57,15 +57,17 @@ public class ChessBoard {
             System.out.print(EscapeSequences.SET_BG_COLOR_WHITE  + " " + i + " " + EscapeSequences.RESET_BG_COLOR);
             for (int j = colStart; j != colEnd + colDirection; j += colDirection){
                 boolean isDark = (i + j) % 2 == 0;
-                String bg = isDark ? EscapeSequences.SET_BG_COLOR_BLACK : EscapeSequences.SET_BG_COLOR_RED;
+                String backgroundColor = isDark ? EscapeSequences.SET_BG_COLOR_BLACK : EscapeSequences.SET_BG_COLOR_RED;
 
                 ChessPiece piece = game.getBoard().getPiece(new ChessPosition(i, j));
                 String pieceString = getPieceString(piece);
-                String tc = "";
+                String textColor = "";
                 if (piece != null){
-                    tc = piece.getTeamColor() == BLACK? EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY : EscapeSequences.SET_TEXT_COLOR_WHITE;
+                    textColor = piece.getTeamColor() == BLACK?
+                                                        EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY : EscapeSequences.SET_TEXT_COLOR_WHITE;
                 }
-                System.out.print(bg + tc + pieceString + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR);
+                System.out.print(backgroundColor + textColor + pieceString +
+                                 EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR);
             }
             System.out.println(EscapeSequences.SET_BG_COLOR_WHITE  + " " + i + " " + EscapeSequences.RESET_BG_COLOR);
         }
