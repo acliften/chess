@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ClientCommunicator {
 
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final HttpClient hC = HttpClient.newHttpClient();
     private String serverURL;
 
     public ClientCommunicator(String url){

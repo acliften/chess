@@ -7,16 +7,6 @@ import static chess.ChessGame.TeamColor.WHITE;
 
 public class ChessBoard {
 
-//    public static void main(String[] args) throws InvalidMoveException {
-//        ChessBoard cb = new ChessBoard();
-//        ChessGame game = new ChessGame();
-//
-//        game.makeMove(new ChessMove(new ChessPosition(2,1), new ChessPosition(3,1), null));
-//
-//        cb.drawChessboard(game, false);
-//        cb.drawChessboard(game, true);
-//    }
-
     public ChessBoard(){
 
     }
@@ -78,7 +68,9 @@ public class ChessBoard {
     }
 
     private String getPieceString(ChessPiece piece) {
-        if (piece == null) return EscapeSequences.EMPTY;
+        if (piece == null){
+            return EscapeSequences.EMPTY;
+        }
 
         return switch (piece.getPieceType()) {
             case KING -> piece.getTeamColor() == WHITE ? EscapeSequences.WHITE_KING : EscapeSequences.BLACK_KING;
