@@ -3,12 +3,8 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import io.javalin.http.InternalServerErrorResponse;
 import records.*;
 import service.UserService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class UserHandler {
     private final UserService userService;

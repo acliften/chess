@@ -4,6 +4,7 @@ import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import records.*;
+
 import java.util.UUID;
 
 public class UserService {

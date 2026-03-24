@@ -6,9 +6,6 @@ import io.javalin.http.Context;
 import records.*;
 import service.GameService;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GameHandler {
     private final GameService gameService;
     private final Gson serializer = new Gson();
