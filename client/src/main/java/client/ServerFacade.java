@@ -86,7 +86,13 @@ public class ServerFacade {
     }
 
     public ChessGame observeGame(String[] params) throws ResponseException {
-        int gameNumber = Integer.parseInt(params[0]);
+        int gameNumber;
+        try {
+             gameNumber = Integer.parseInt(params[0]);
+        } catch (Exception e){
+            throw new ResponseException(ResponseException.Code.ClientError, "Error: use game ID");
+        }
+
         if (!games.containsKey(gameNumber)){
             throw new ResponseException(ResponseException.Code.ClientError, "Error: invalid game number");
         }
