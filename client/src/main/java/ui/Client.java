@@ -1,8 +1,9 @@
 package ui;
 
 import chess.ChessGame;
-import client.ResponseException;
+import websocket.ResponseException;
 import client.ServerFacade;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,9 +15,11 @@ public class Client {
     boolean inGame = false;
     ServerFacade sf;
     ChessBoard cb = new ChessBoard();
+    WebSocketFacade ws;
 
-    public Client(String url){
-        this.sf = new ServerFacade(url);
+    public Client(String url) throws ResponseException {
+        this.ws = new WebSocketFacade(url);
+        this.sf = new ServerFacade(url, ws);
     }
 
     public void run() {
@@ -80,6 +83,16 @@ public class Client {
                 }
                 case "help" -> help();
                 case "quit" -> "quit";
+
+                case "redraw" -> "";
+                case "leave" -> {
+                    loggedIn = true;
+                    inGame = false;
+                    yield null;
+                }
+                case "move" -> " ";
+                case "resign" -> null;
+                case "highlight" -> null;
                 default -> help();
             };
         } catch (ResponseException e){
@@ -105,7 +118,7 @@ public class Client {
                     - leave | exits game
                     - move <FROM> <TO> | make move. example "move a7 a6"
                     - resign | player forfiets the game ends
-                    - help | list of available commands""";
+                    - highlight | highllights legal moves""";
         }
         return """
                     - register <USERNAME> <PASSWORD> <EMAIL> | to create an account

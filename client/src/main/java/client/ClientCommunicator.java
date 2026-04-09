@@ -1,6 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
+import websocket.ResponseException;
 
 import java.io.IOException;
 import java.io.InputStream;

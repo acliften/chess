@@ -3,6 +3,8 @@ package client;
 import org.junit.jupiter.api.*;
 import server.Server;
 import org.junit.jupiter.api.Test;
+import websocket.ResponseException;
+import websocket.WebSocketFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,6 +13,7 @@ public class ServerFacadeTests {
     private static Server server;
     private static ServerFacade sf;
     private static String url;
+    private static WebSocketFacade ws;
 
     @BeforeAll
     public static void init() {
@@ -18,7 +21,7 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         url = "http://localhost:" + port;
-        sf = new ServerFacade(url);
+        sf = new ServerFacade(url, ws);
     }
 
     @BeforeEach

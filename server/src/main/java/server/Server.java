@@ -26,6 +26,8 @@ public class Server {
             ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
             ClearHandler clearHandler = new ClearHandler(clearService);
 
+            WebSocketHandler webSocketHandler = new WebSocketHandler();
+
             // Register your endpoints and exception handlers here.
             javalin = Javalin.create(config -> config.staticFiles.add("web"))
                     .post("/user", userHandler::register)
@@ -34,7 +36,12 @@ public class Server {
                     .get("/game", gameHandler::listGames)
                     .post("/game", gameHandler::createGame)
                     .put("/game", gameHandler::joinGame)
-                    .delete("/db", clearHandler::clear);
+                    .delete("/db", clearHandler::clear)
+                    .ws("/ws", ws -> {
+                        ws.onConnect(webSocketHandler);
+                        ws.onMessage(webSocketHandler);
+                        ws.onClose(webSocketHandler);
+                    });
         } catch (DataAccessException e){
             throw new RuntimeException("Failed to start server", e);
         }

@@ -2,6 +2,8 @@ package client;
 
 import chess.ChessGame;
 import records.*;
+import websocket.ResponseException;
+import websocket.WebSocketFacade;
 
 import java.util.HashMap;
 
@@ -10,10 +12,15 @@ public class ServerFacade {
     ClientCommunicator server;
     String authToken;
     HashMap<Integer, GameList> games;
+    String url;
+    WebSocketFacade ws;
 
-    public ServerFacade(String url){
+
+    public ServerFacade(String url, WebSocketFacade ws){
         server = new ClientCommunicator(url);
         games = new HashMap<>();
+        this.url = url;
+        this.ws = ws;
     }
 
     public String register(String[] params) throws ResponseException {
@@ -82,6 +89,8 @@ public class ServerFacade {
         server.makeRequest("PUT", "/game", request, null, authToken);
 
         //change later
+        ws = new WebSocketFacade(url);
+        ws.connect(authToken, gameNumber);
         return new ChessGame();
     }
 

@@ -1,4 +1,4 @@
-package client;
+package websocket;
 
 import com.google.gson.Gson;
 
