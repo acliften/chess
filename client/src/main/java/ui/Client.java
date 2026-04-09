@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class Client {
 
     boolean loggedIn = false;
+    boolean inGame = false;
     ServerFacade sf;
     ChessBoard cb = new ChessBoard();
 
@@ -63,6 +64,8 @@ public class Client {
                     }
                     ChessGame game = sf.joinGame(params);
                     cb.drawChessboard(game, Objects.equals(params[1], "BLACK"));
+                    inGame = true;
+                    loggedIn = false;
                     yield null;
                 }
                 case "observe" -> {
@@ -85,21 +88,30 @@ public class Client {
     }
 
     public String help() {
-        if (!loggedIn) {
+        if (loggedIn) {
             return """
-                    - register <USERNAME> <PASSWORD> <EMAIL> - to create an account
-                    - login <USERNAME> <PASSWORD>
-                    - quit - exit program
-                    - help - list of available commands""";
+                    - create <GAME_NAME> | creates a game
+                    - list | lists available games
+                    - join <ID> [WHITE|BLACK] | joins a game
+                    - observe <ID> | spectate a game
+                    - logout | log out of your account
+                    - quit | exit program
+                    - help | list of available actions""";
+
+        } else if (inGame) {
+            return """
+                    - help | list of available actions
+                    - redraw | redraws the chessboard
+                    - leave | exits game
+                    - move <FROM> <TO> | make move. example "move a7 a6"
+                    - resign | player forfiets the game ends
+                    - help | list of available commands""";
         }
         return """
-                - create <GAME_NAME> - creates a game
-                - list - lists available games
-                - join <ID> [WHITE|BLACK] - joins a game
-                - observe <ID> - spectate a game
-                - logout - log out of your account
-                - quit - exit program
-                - help - list of available commands""";
+                    - register <USERNAME> <PASSWORD> <EMAIL> | to create an account
+                    - login <USERNAME> <PASSWORD>
+                    - quit | exit program
+                    - help | list of available actions""";
     }
 
 }
