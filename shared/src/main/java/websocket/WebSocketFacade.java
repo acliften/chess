@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 public class WebSocketFacade extends Endpoint {
 
     private Session session;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public WebSocketFacade(String url) throws ResponseException {
         try{
@@ -39,7 +39,7 @@ public class WebSocketFacade extends Endpoint {
                 switch (serverMessage.getServerMessageType()){
                     case LOAD_GAME -> {
                         //draw chessboard from server
-                        System.out.println("game recieved");
+                        System.out.println("game received");
                     }
                     case NOTIFICATION -> {
                         System.out.println("serverMessage.");
@@ -58,16 +58,30 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void makeMove(){
-
+    public void makeMove(UserGameCommand cmd){
+        try {
+            session.getBasicRemote().sendText(gson.toJson(cmd));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void leave(){
-
+    public void leave(String authToken, int gameID){
+        try{
+            UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            session.getBasicRemote().sendText(gson.toJson(cmd));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void resign(){
-
+    public void resign(String authToken, int gameID){
+        try {
+            UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            session.getBasicRemote().sendText(gson.toJson(cmd));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

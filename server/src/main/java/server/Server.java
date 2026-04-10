@@ -26,7 +26,7 @@ public class Server {
             ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
             ClearHandler clearHandler = new ClearHandler(clearService);
 
-            WebSocketHandler webSocketHandler = new WebSocketHandler();
+            WebSocketHandler webSocketHandler = new WebSocketHandler(gameDAO, authDAO);
 
             // Register your endpoints and exception handlers here.
             javalin = Javalin.create(config -> config.staticFiles.add("web"))
