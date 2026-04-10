@@ -15,11 +15,21 @@ public class ChessGame implements Cloneable{
 
     private TeamColor turn;
     private ChessBoard gameBoard;
+    private boolean isOver;
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean over) {
+        isOver = over;
+    }
 
     public ChessGame() {
         turn = TeamColor.WHITE;
         gameBoard = new ChessBoard();
         gameBoard.resetBoard();
+        isOver = false;
     }
 
     /**

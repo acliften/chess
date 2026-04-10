@@ -1,11 +1,9 @@
 package server;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.SQLGameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import io.javalin.websocket.*;
 import model.GameData;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +24,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private Map<WsContext, String> users = new HashMap<>();
     private static GameDAO gameDAO;
     private static AuthDAO authDAO;
+    private static GameService gs;
 
-    public WebSocketHandler(GameDAO gameDAO, AuthDAO authDAO){
+    public WebSocketHandler(GameDAO gameDAO, AuthDAO authDAO, GameService gs){
         WebSocketHandler.gameDAO = gameDAO;
         WebSocketHandler.authDAO = authDAO;
+        WebSocketHandler.gs = gs;
     }
 
     @Override
@@ -45,28 +45,63 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         switch (cmd.getCommandType()){
             case CONNECT -> {
                 gameInfo.putIfAbsent(cmd.getGameID(), new HashSet<>());
-                gameInfo.get(cmd.getGameID()).add(wsMessageContext);
+                Set<WsContext> sessions = gameInfo.get(cmd.getGameID());
+                sessions.add(wsMessageContext);
+
                 System.out.println("Connecting to game " + cmd.getGameID());
                 // Send LOAD_GAME message (required by tests)
 
                 GameData game = gameDAO.getGame(cmd.getGameID());
-                users.put(wsMessageContext, authDAO.getAuth(cmd.getAuthToken()).username());
+                String username = authDAO.getAuth(cmd.getAuthToken()).username();
+                users.put(wsMessageContext, username);
 
                 String loadGameMessage = new Gson().toJson(Map.of(
                         "serverMessageType", "LOAD_GAME",
                         "game", game
                 ));
                 wsMessageContext.send(loadGameMessage);
+
+                if (sessions.size() > 1){
+                    String n = new Gson().toJson(Map.of(
+                            "serverMessageType", "NOTIFICATION",
+                            "message", username + " joined the game"
+                    ));
+                    for (WsContext wsc : sessions) {
+                        if (!wsc.equals(wsMessageContext)) {
+                            wsc.send(n);
+                        }
+                    }
+                }
+
+                messageUsers(cmd.getGameID(), username + " joined as player/observer");
             }
             case MAKE_MOVE -> {
-                cmd = gson.fromJson(wsMessageContext.message(), MakeMoveCommand.class);
-                String username = authDAO.getAuth(cmd.getAuthToken()).username();
+//                System.out.println("made move");
+//                MakeMoveCommand mcmd = gson.fromJson(wsMessageContext.message(), MakeMoveCommand.class);
+//                String username = authDAO.getAuth(mcmd.getAuthToken()).username();
+//
+//                GameData game = gameDAO.getGame(mcmd.getGameID());
+//                ChessGame chessGame = game.game();
+//                ChessMove move = mcmd.getMove();
+//                chessGame.makeMove(move);
+//
+//                gameDAO.updateGame(game.gameID(), new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame));
+//
+//                sendGame(game.gameID());
+//                messageUsers(mcmd.getGameID(), username + "moved from " + move.getStartPosition().toString()
+//                                             + " to " + move.getEndPosition().toString());
+                try {
+                    MakeMoveCommand mcmd = gson.fromJson(wsMessageContext.message(), MakeMoveCommand.class);
+                    String username = authDAO.getAuth(mcmd.getAuthToken()).username();
 
-                GameData game = gameDAO.getGame(cmd.getGameID());
+                    GameData updatedGame = gs.makeMove(mcmd.getAuthToken(), mcmd.getGameID(), mcmd.getMove());
 
+                    sendGame(updatedGame.gameID()); // Broadcast LOAD_GAME to everyone
+                    messageUsers(mcmd.getGameID(), username + "moved from " + mcmd.getMove().getStartPosition().toString());
 
-                System.out.println("made move");
-                messageUsers(cmd.getGameID(), username + "made move");
+                } catch (DataAccessException e) {
+                    throw new DataAccessException(e.getMessage());
+                }
             }
             case LEAVE -> {
                 System.out.println("user leaving");
@@ -78,8 +113,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 messageUsers(cmd.getGameID(), username + "left the game");
             }
             case RESIGN -> {
+                String username = authDAO.getAuth(cmd.getAuthToken()).username();
 
-                System.out.println("User resigning");
+                messageUsers(cmd.getGameID(), username + " resigned");
+
+                System.out.println(username + " resigned");
             }
         }
 
@@ -109,5 +147,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         for (WsContext wsc : sessions){
             wsc.send(json);
         }
+
+
     }
+
+    private void sendGame(int gameID) throws DataAccessException {
+        GameData game = gameDAO.getGame(gameID);
+
+        String json = new Gson().toJson(Map.of(
+                "serverMessageType", "LOAD_GAME",
+                "game", game
+        ));
+
+        Set<WsContext> sessions = gameInfo.get(gameID);
+        if (sessions == null) return;
+
+        for (WsContext ws : sessions) {
+            ws.send(json);
+        }
+    }
+
 }
