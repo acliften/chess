@@ -89,11 +89,15 @@ public class GameService {
 
     public GameData makeMove(String authToken, int gameID, ChessMove move) throws DataAccessException {
         AuthData auth = authDAO.getAuth(authToken);
-        if (auth == null) throw new DataAccessException("Error: unauthorized");
+        if (auth == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
         String username = auth.username();
 
         GameData gameData = gameDAO.getGame(gameID);
-        if (gameData == null) throw new DataAccessException("Error: game does not exist");
+        if (gameData == null){
+            throw new DataAccessException("Error: game does not exist");
+        }
 
         if (gameData.game().isOver()) {
             throw new DataAccessException("Error: game is over");
@@ -127,10 +131,14 @@ public class GameService {
 
     public void resign(String authToken, int gameID) throws DataAccessException {
         AuthData auth = authDAO.getAuth(authToken);
-        if (auth == null) throw new DataAccessException("Error: unauthorized");
+        if (auth == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
 
         GameData gameData = gameDAO.getGame(gameID);
-        if (gameData == null) throw new DataAccessException("Error: bad gameID");
+        if (gameData == null) {
+            throw new DataAccessException("Error: bad gameID");
+        }
 
         String username = auth.username();
         if (!username.equals(gameData.whiteUsername()) && !username.equals(gameData.blackUsername())) {

@@ -1,7 +1,5 @@
 package server;
 
-import chess.ChessGame;
-import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.websocket.*;
@@ -16,11 +14,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static websocket.ResponseException.fromJson;
-
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
-    private static final Map<Integer, Set<WsContext>> gameInfo = new HashMap<>();
+    private static final Map<Integer, Set<WsContext>> GAME_INFO = new HashMap<>();
     private Map<WsContext, String> users = new HashMap<>();
     private static GameDAO gameDAO;
     private static AuthDAO authDAO;
@@ -44,12 +40,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         switch (cmd.getCommandType()){
             case CONNECT -> {
-                gameInfo.putIfAbsent(cmd.getGameID(), new HashSet<>());
-                Set<WsContext> sessions = gameInfo.get(cmd.getGameID());
+                GAME_INFO.putIfAbsent(cmd.getGameID(), new HashSet<>());
+                Set<WsContext> sessions = GAME_INFO.get(cmd.getGameID());
                 sessions.add(wsMessageContext);
 
                 System.out.println("Connecting to game " + cmd.getGameID());
-                // Send LOAD_GAME message (required by tests)
 
                 GameData game = gameDAO.getGame(cmd.getGameID());
                 String username = authDAO.getAuth(cmd.getAuthToken()).username();
@@ -67,37 +62,22 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                             "message", username + " joined the game"
                     ));
                     for (WsContext wsc : sessions) {
-                        if (!wsc.equals(wsMessageContext)) {
-                            wsc.send(n);
-                        }
+                        wsc.send(n);
                     }
                 }
 
                 messageUsers(cmd.getGameID(), username + " joined as player/observer");
             }
             case MAKE_MOVE -> {
-//                System.out.println("made move");
-//                MakeMoveCommand mcmd = gson.fromJson(wsMessageContext.message(), MakeMoveCommand.class);
-//                String username = authDAO.getAuth(mcmd.getAuthToken()).username();
-//
-//                GameData game = gameDAO.getGame(mcmd.getGameID());
-//                ChessGame chessGame = game.game();
-//                ChessMove move = mcmd.getMove();
-//                chessGame.makeMove(move);
-//
-//                gameDAO.updateGame(game.gameID(), new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame));
-//
-//                sendGame(game.gameID());
-//                messageUsers(mcmd.getGameID(), username + "moved from " + move.getStartPosition().toString()
-//                                             + " to " + move.getEndPosition().toString());
                 try {
                     MakeMoveCommand mcmd = gson.fromJson(wsMessageContext.message(), MakeMoveCommand.class);
                     String username = authDAO.getAuth(mcmd.getAuthToken()).username();
 
                     GameData updatedGame = gs.makeMove(mcmd.getAuthToken(), mcmd.getGameID(), mcmd.getMove());
 
-                    sendGame(updatedGame.gameID()); // Broadcast LOAD_GAME to everyone
-                    messageUsers(mcmd.getGameID(), username + "moved from " + mcmd.getMove().getStartPosition().toString());
+                    sendGame(updatedGame.gameID());
+                    messageUsers(mcmd.getGameID(),
+                            username + "moved from " + mcmd.getMove().getStartPosition().toString());
 
                 } catch (DataAccessException e) {
                     throw new DataAccessException(e.getMessage());
@@ -105,8 +85,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
             case LEAVE -> {
                 System.out.println("user leaving");
-                if (gameInfo.get(cmd.getGameID()) != null){
-                    gameInfo.get(cmd.getGameID()).remove(wsMessageContext);
+                if (GAME_INFO.get(cmd.getGameID()) != null){
+                    GAME_INFO.get(cmd.getGameID()).remove(wsMessageContext);
                 }
                 //need to get username
                 String username = authDAO.getAuth(cmd.getAuthToken()).username();
@@ -128,13 +108,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleClose(@NotNull WsCloseContext wsCloseContext) throws Exception {
         System.out.println("Disconnected");
-        for (Set<WsContext> sessions : gameInfo.values()){
+        for (Set<WsContext> sessions : GAME_INFO.values()){
             sessions.removeIf(wsc -> wsc.sessionId().equals(wsCloseContext.sessionId()));
         }
     }
 
     private void messageUsers(int gameID, String message){
-        Set<WsContext> sessions = gameInfo.get(gameID);
+        Set<WsContext> sessions = GAME_INFO.get(gameID);
         if (sessions == null){
             return;
         }
@@ -159,7 +139,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 "game", game
         ));
 
-        Set<WsContext> sessions = gameInfo.get(gameID);
+        Set<WsContext> sessions = GAME_INFO.get(gameID);
         if (sessions == null) return;
 
         for (WsContext ws : sessions) {
