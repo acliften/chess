@@ -1,10 +1,10 @@
-package websocket;
+package webSocket;
 
 import jakarta.websocket.*;
+import websocket.ResponseException;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
-import javax.management.Notification;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

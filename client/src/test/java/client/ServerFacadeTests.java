@@ -4,7 +4,7 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import org.junit.jupiter.api.Test;
 import websocket.ResponseException;
-import websocket.WebSocketFacade;
+import webSocket.WebSocketFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
 
