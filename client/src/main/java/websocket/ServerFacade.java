@@ -1,9 +1,8 @@
-package client;
+package websocket;
 
 import chess.ChessGame;
+import client.ClientCommunicator;
 import records.*;
-import websocket.ResponseException;
-import websocket.WebSocketFacade;
 
 import java.util.HashMap;
 

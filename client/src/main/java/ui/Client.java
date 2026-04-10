@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import websocket.ResponseException;
-import client.ServerFacade;
+import websocket.ServerFacade;
 import websocket.WebSocketFacade;
 
 import java.util.Arrays;

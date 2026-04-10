@@ -1,7 +1,6 @@
-package webSocket;
+package websocket;
 
 import jakarta.websocket.*;
-import websocket.ResponseException;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
