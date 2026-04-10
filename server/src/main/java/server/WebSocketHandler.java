@@ -140,7 +140,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ));
 
         Set<WsContext> sessions = GAME_INFO.get(gameID);
-        if (sessions == null) return;
+        if (sessions == null){
+            return;
+        }
 
         for (WsContext ws : sessions) {
             ws.send(json);

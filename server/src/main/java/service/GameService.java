@@ -106,7 +106,9 @@ public class GameService {
         ChessGame chessGame = gameData.game();
         ChessPiece pieceAtStart = chessGame.getBoard().getPiece(move.getStartPosition());
 
-        if (pieceAtStart == null) throw new DataAccessException("Error: no piece at start position");
+        if (pieceAtStart == null){
+            throw new DataAccessException("Error: no piece at start position");
+        }
 
         String colorAtStart = pieceAtStart.getTeamColor().toString(); // "WHITE" or "BLACK"
         String playerColor = (username.equals(gameData.whiteUsername())) ? "WHITE" :
